@@ -73,15 +73,26 @@ pub fn tokenize(input: String) -> Vec<Token> {
 
             // Words
             c if c.is_alphanumeric() => {
-                let word = iter
+                let lexeme: String = iter
                     .by_ref()
                     .peeking_take_while(|&x| x.is_alphanumeric())
                     .collect();
 
-                tokens.push(Token{kind: TokenKind::Word, lexeme: word});
+                // Keywords
+                let kind = match lexeme.as_str() {
+                    "while"  => {TokenKind::While}
+                    "for"    => {TokenKind::For}
+                    "if"     => {TokenKind::If}
+                    "elif"   => {TokenKind::Elif}
+                    "else"   => {TokenKind::Else}
+                    _ => {TokenKind::Word}
+                };
+
+                tokens.push(Token{kind, lexeme});
+                
             }
 
-            // String 
+            // Strings
             '\'' | '"' => {
                 let ch = c.clone();
 
@@ -155,7 +166,19 @@ pub enum TokenKind {
     LSquare,
     RSquare,
 
+    // Types
+    TypeInt,
+    TypeLong,
+    TypeChar,
+    TypeFloat,
+    TypeDouble,
+
     // Etc
     Newline,
     Unknown,
+    While,
+    For,
+    If,
+    Elif,
+    Else,
 }
